@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chúc Mừng Sinh Nhật - Vận Mệnh Tuổi Mới</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Cinzel & Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Cinzel:wght@600;700;900&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      overflow-x: hidden;
+      background-color: #0b0e1b;
+      color: #f1f5f9;
+    }
+    .font-cinzel {
+      font-family: 'Cinzel', serif;
+    }
+    /* Hiệu ứng rung lắc khi gõ sai mật khẩu */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-10px); }
+      40%, 80% { transform: translateX(10px); }
+    }
+    .shake-animation {
+      animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    /* Gradient viền hoàng kim Genshin */
+    .genshin-gold-border {
+      border: 2px solid #e6ca65;
+      box-shadow: 0 0 20px rgba(230, 202, 101, 0.35), inset 0 0 15px rgba(230, 202, 101, 0.2);
+    }
+    .genshin-purple-border {
+      border: 2px solid #b877f7;
+      box-shadow: 0 0 20px rgba(184, 119, 247, 0.4), inset 0 0 15px rgba(184, 119, 247, 0.2);
+    }
+    .genshin-blue-border {
+      border: 2px solid #5bb2ff;
+      box-shadow: 0 0 15px rgba(91, 178, 255, 0.3), inset 0 0 10px rgba(91, 178, 255, 0.15);
+    }
+    /* Nút bấm Genshin */
+    .wish-btn {
+      background: linear-gradient(180deg, #f7ecd2 0%, #e2c992 50%, #c9a765 100%);
+      color: #3b2c15;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 0 12px rgba(235, 207, 137, 0.4);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .wish-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(235, 207, 137, 0.65);
+    }
+    .wish-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+    /* Chuyển động lơ lửng */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .animate-float {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+    /* Glow pulse cho quà */
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(250, 204, 21, 0.5), 0 0 35px rgba(250, 204, 21, 0.2); }
+      50% { box-shadow: 0 0 30px rgba(250, 204, 21, 0.8), 0 0 60px rgba(250, 204, 21, 0.4); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 2.2s infinite;
+    }
+    /* Lật thẻ bài 3D */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+    /* Thanh cuộn tinh tế */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #caa658;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-[#0b0e1b] min-h-screen text-slate-100 flex flex-col justify-between relative overflow-hidden select-none">
+
+  <!-- Canvas nền: Hiệu ứng bóng bay Đoạn 1 & Bầu trời sao kỳ ảo Đoạn 4 -->
+  <canvas id="bgCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+  <!-- ==================== ĐOẠN 1: MÀN HÌNH BẢO MẬT & BÓNG BAY ==================== -->
+  <div id="stage1" class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 transition-opacity duration-700">
+    <div class="max-w-md w-full backdrop-blur-xl bg-slate-900/80 border border-amber-300/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-purple-950/50 text-center relative overflow-hidden">
+      <!-- Dải trang trí mạ vàng trên đỉnh -->
+      <div class="absolute -top-12 -right-12 w-28 h-28 bg-amber-400/10 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-12 -left-12 w-28 h-28 bg-purple-500/10 rounded-full blur-2xl"></div>
+
+      <!-- Biểu tượng sinh nhật & khóa -->
+      <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-tr from-amber-500 to-yellow-200 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 border border-white/40">
+        <svg class="w-8 h-8 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a4 4 0 0 0-4 4v2H7a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-8a3 3 0 0 0-3-3h-1V6a4 4 0 0 0-4-4zm-2 6V6a2 2 0 1 1 4 0v2H10zm2 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+        </svg>
+      </div>
+
+      <h1 class="text-xl sm:text-2xl font-bold font-cinzel text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 tracking-wider">
+        HỆ THỐNG XÁC THỰC
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1 mb-5">Nhập mật mã ngày sinh để mở phong ấn quà tặng</p>
+
+      <!-- Khung hiển thị các chấm PIN (8 ký tự: 03102010) -->
+      <div id="pinContainer" class="flex justify-center items-center gap-2.5 sm:gap-3 py-3 px-4 mb-4 bg-slate-950/60 rounded-2xl border border-slate-700/50 shadow-inner">
+        <!-- 8 chấm tròn -->
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+        <span class="pin-dot w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-slate-500 transition-all duration-200"></span>
+      </div>
+
+      <!-- Thông báo trạng thái -->
+      <div id="pinMessage" class="h-6 text-xs text-amber-300/80 mb-4 transition-all">Gợi ý: Ngày sinh nhật (DDMMYYYY)</div>
+
+      <!-- Bàn phím số 12 nút (10 phím số + Xóa + Xác nhận) -->
+      <div class="grid grid-cols-3 gap-2.5 sm:gap-3 max-w-[280px] sm:max-w-[310px] mx-auto">
+        <button onclick="handleKeypad('1')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">1</button>
+        <button onclick="handleKeypad('2')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">2</button>
+        <button onclick="handleKeypad('3')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">3</button>
+
+        <button onclick="handleKeypad('4')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">4</button>
+        <button onclick="handleKeypad('5')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">5</button>
+        <button onclick="handleKeypad('6')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">6</button>
+
+        <button onclick="handleKeypad('7')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">7</button>
+        <button onclick="handleKeypad('8')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">8</button>
+        <button onclick="handleKeypad('9')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">9</button>
+
+        <button onclick="handleKeypad('CLEAR')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-rose-900/40 hover:bg-rose-800/60 active:bg-rose-600 font-semibold text-xs sm:text-sm text-rose-300 border border-rose-700/50 shadow flex items-center justify-center transition-all">
+          <span>Hủy / Xóa</span>
+        </button>
+        <button onclick="handleKeypad('0')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-amber-400 active:text-slate-950 font-bold text-lg text-slate-100 border border-slate-700/60 shadow transition-all">0</button>
+        <button onclick="handleKeypad('ENTER')" class="keypad-btn h-12 sm:h-14 rounded-2xl bg-amber-500/80 hover:bg-amber-400 active:bg-amber-300 font-semibold text-xs sm:text-sm text-slate-950 border border-amber-300 shadow flex items-center justify-center transition-all font-bold">
+          <span>Xác nhận</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ĐOẠN 2 & 3: THÔNG BÁO & PHONG THƯ SINH NHẬT ==================== -->
+  <div id="stage2_3" class="fixed inset-0 z-20 flex flex-col items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-700">
+
+    <!-- Thông báo trượt xuống phong cách iOS / Zalo -->
+    <div id="pushNotification" class="fixed top-4 left-1/2 -translate-x-1/2 w-11/12 max-w-md bg-slate-900/90 border border-amber-300/40 rounded-2xl p-3.5 shadow-2xl backdrop-blur-xl flex items-center gap-3.5 -translate-y-32 transition-transform duration-500 ease-out z-50">
+      <!-- Avatar -->
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center text-xl shadow-md border border-white/20 shrink-0">
+        🎂
+      </div>
+      <!-- Nội dung -->
+      <div class="flex-1 min-w-0 text-left">
+        <div class="flex justify-between items-center mb-0.5">
+          <span class="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+            BTN
+            <span class="inline-block w-3.5 h-3.5 bg-blue-500 text-white rounded-full text-[9px] text-center leading-3.5">✓</span>
+          </span>
+          <span class="text-[10px] text-slate-400">Vừa xong</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-200 font-medium truncate">Chúc Mừng Sinh Nhật Nhé! 🎉🎂</p>
+      </div>
+    </div>
+
+    <!-- Bức Thư Chúc Mừng Sinh Nhật (Đoạn 3) -->
+    <div id="letterWrapper" class="max-w-lg w-full bg-gradient-to-b from-[#2a1c42] to-[#120f26] border-2 border-amber-300/60 rounded-3xl p-6 sm:p-9 shadow-2xl shadow-amber-500/20 text-center relative overflow-hidden animate-float">
+      <!-- Họa tiết trang trí phong cách hoàng gia -->
+      <div class="w-16 h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent mx-auto mb-4"></div>
+
+      <div class="inline-block px-3 py-1 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-300 text-xs font-semibold mb-3 tracking-widest uppercase">
+        ★ THƯ CHÚC MỪNG ĐẶC BIỆT ★
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-bold font-cinzel text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 mb-4">
+        Happy Birthday!
+      </h2>
+
+      <div class="bg-black/30 rounded-2xl p-4 sm:p-5 border border-white/10 text-left space-y-3 text-slate-200 text-xs sm:text-sm leading-relaxed mb-6">
+        <p>Gửi người bạn từ năm lớp 6 của mình,</p>
+        <p>Chúc b.minh bước sang  tuổi mới luôn ngập  tràn niềm vui, mỗi ngày nụ cười và đạt được mọi ước mơ mà mình đang ấp ủ.</p>
+        <p>Cầu mong mỗi ngày của bạn đều lấp lánh như những vì sao trên bầu trời Teyvat, luôn may mắn và hạnh phúc nhé! ✨</p>
+        <div class="text-right font-semibold text-amber-300 pt-2">- Từ BTN & Rei  -</div>
+      </div>
+
+      <!-- Nút "Nhận Quà 🎁" dẫn sang Gacha -->
+      <button onclick="transitionToGacha()" class="pulse-glow w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-slate-950 font-bold text-base sm:text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 group">
+        <span>Nhận Quà Ngay</span>
+        <span class="text-xl group-hover:rotate-12 transition-transform">🎁</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== ĐOẠN 4: KHÔNG GIAN BANNER GACHA GENSHIN IMPACT ==================== -->
+  <div id="stage4" class="fixed inset-0 z-30 flex flex-col justify-between p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-1000 bg-slate-950/95 overflow-y-auto">
+
+    <!-- Header Banner: Tiêu đề & Thông tin Pity (Bảo hiểm) -->
+    <header class="w-full max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3 pt-2 pb-4 border-b border-amber-300/20">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-300/50 flex items-center justify-center text-xl">
+          🌟
+        </div>
+        <div>
+          <h1 class="text-base sm:text-xl font-bold font-cinzel text-amber-300 tracking-wider">
+            CẦU NGUYỆN SINH NHẬT
+          </h1>
+          <p class="text-[11px] text-slate-400 font-medium">Sự Kiện Đặc Biệt: Vận Mệnh Tuổi Mới</p>
+        </div>
+      </div>
+
+      <!-- Bộ đếm bảo hiểm 90 lần (Pity Counter) -->
+      <div class="flex items-center gap-2 bg-slate-900/90 border border-amber-400/30 rounded-full px-3.5 py-1.5 shadow-inner">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        <span class="text-xs text-slate-300">
+          Bảo hiểm 5★: <span id="pityCountText" class="font-bold text-amber-300">0</span>/90
+        </span>
+        <span class="text-[10px] text-amber-400/80">(Còn <span id="pityRemainText" class="font-bold">90</span> lần nhận quà)</span>
+      </div>
+
+      <!-- Nút xem Lịch sử & Quy tắc -->
+      <div class="flex items-center gap-2">
+        <button onclick="openHistoryModal()" class="px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs text-slate-300 border border-slate-600 transition-all">
+          Lịch Sử Quay
+        </button>
+        <button onclick="openRulesModal()" class="px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs text-slate-300 border border-slate-600 transition-all">
+          Chi Tiết
+        </button>
+      </div>
+    </header>
+
+    <!-- Khu Vực Trung Tâm: Banner Ngang Phong Cách Genshin Impact -->
+    <main class="w-full max-w-5xl mx-auto my-auto py-4">
+      <div class="relative w-full aspect-[16/9] sm:aspect-[21/9] max-h-[460px] rounded-3xl overflow-hidden genshin-gold-border bg-gradient-to-r from-[#170e2f] via-[#241445] to-[#121a38] shadow-2xl flex flex-col justify-between p-5 sm:p-8">
+        <!-- Nền mây & ánh sáng huyền ảo -->
+        <div class="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-400/20 via-purple-600/20 to-transparent pointer-events-none"></div>
+
+        <!-- Tag góc trên -->
+        <div class="relative z-10 flex justify-between items-start">
+          <div class="inline-flex items-center gap-2 bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-r-full shadow-lg">
+            <span>UP TỶ LỆ</span>
+            <span class="text-[10px] bg-slate-950 text-amber-300 px-1.5 py-0.5 rounded-full font-mono">5★</span>
+          </div>
+          <div class="text-right text-[11px] text-amber-200/80 bg-black/40 px-3 py-1 rounded-full border border-amber-300/20">
+            Mối Duyên Tương Ngộ Vĩnh Cửu
+          </div>
+        </div>
+
+        <!-- Tiêu đề lớn giữa banner & hình ảnh đại diện hộp quà -->
+        <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+          <div class="text-left space-y-2">
+            <div class="text-xs uppercase tracking-widest text-amber-300 font-semibold">Banner Giới Hạn Sinh Nhật</div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold font-cinzel text-white leading-tight drop-shadow-md">
+              HỘP QUÀ <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400">HOÀNG KIM 5★</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 max-w-md line-clamp-2">
+              Khám phá vận mệnh sinh nhật cùng những lời chúc chân thành và cơ hội trúng Thẻ Vàng Quà Tặng Độc Quyền!
+            </p>
+          </div>
+
+          <!-- Hình ảnh minh họa hộp quà Genshin phát sáng -->
+          <div class="hidden md:flex justify-center items-center relative">
+            <div class="w-48 h-48 rounded-full bg-amber-400/20 blur-3xl absolute animate-pulse"></div>
+            <div class="w-40 h-40 rounded-3xl bg-gradient-to-tr from-amber-500/30 to-purple-600/30 border border-amber-300/40 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center transform rotate-3 hover:rotate-0 transition-transform shadow-2xl">
+              <span class="text-6xl mb-2 drop-shadow-lg">🎁</span>
+              <span class="text-[11px] font-bold text-amber-200 tracking-wider">PHẦN QUÀ ĐẶC BIỆT</span>
+              <div class="flex text-amber-300 text-xs mt-1">★★★★★</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gợi ý tỷ lệ bên dưới banner -->
+        <div class="relative z-10 flex flex-wrap items-center justify-between text-[11px] text-slate-400 border-t border-white/10 pt-3">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Thẻ Vàng 5★ (Quà Tặng Thật)</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-purple-400"></span> Thẻ Tím 4★ (14 Lời Chúc)</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400"></span> Thẻ Lam 3★ (17 Lời Chúc Vui)</span>
+          </div>
+          <span class="text-amber-300/90 font-medium">Bảo hiểm 90 lần chắc chắn nhận Thẻ Vàng</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer: 2 Nút Cầu Nguyện X1 và X10 Phong Cách Genshin Impact -->
+    <footer class="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-end gap-3 sm:gap-5 pb-3">
+      <!-- Nút x1 -->
+      <button onclick="pullGacha(1)" class="wish-btn w-full sm:w-auto min-w-[200px] px-6 py-2.5 rounded-full flex items-center justify-between gap-3 group">
+        <div class="text-left">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-800">Cầu Nguyện</div>
+          <div class="text-sm font-black text-slate-950 font-cinzel">x1 Lần</div>
+        </div>
+        <div class="flex items-center gap-1.5 bg-black/10 px-2.5 py-1 rounded-full">
+          <span class="text-base">✦</span>
+          <span class="text-xs font-bold font-mono">x1</span>
+        </div>
+      </button>
+
+      <!-- Nút x10 -->
+      <button onclick="pullGacha(10)" class="wish-btn w-full sm:w-auto min-w-[220px] px-6 py-2.5 rounded-full flex items-center justify-between gap-3 group border-2 border-amber-300/70">
+        <div class="text-left">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-800">Cầu Nguyện</div>
+          <div class="text-sm font-black text-slate-950 font-cinzel">x10 Lần</div>
+        </div>
+        <div class="flex items-center gap-1.5 bg-black/10 px-2.5 py-1 rounded-full">
+          <span class="text-base text-purple-900">✦</span>
+          <span class="text-xs font-bold font-mono">x10</span>
+        </div>
+      </button>
+    </footer>
+  </div>
+
+  <!-- ==================== HIỆU ỨNG HOẠT HỌA SAO BĂNG GACHA ==================== -->
+  <div id="wishingOverlay" class="fixed inset-0 z-40 bg-black opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center">
+    <canvas id="meteorCanvas" class="absolute inset-0 w-full h-full"></canvas>
+    <!-- Nút Bỏ Qua (Skip) -->
+    <button onclick="skipWishAnimation()" class="absolute top-6 right-6 z-50 px-4 py-1.5 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 text-xs text-white/80 transition-all">
+      Bỏ qua ❯❯
+    </button>
+  </div>
+
+  <!-- ==================== MÀN HÌNH KẾT QUẢ QUAY GACHA ==================== -->
+  <div id="resultsModal" class="fixed inset-0 z-50 flex flex-col justify-between p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-500 bg-[#090b14]/95 backdrop-blur-2xl overflow-y-auto">
+    
+    <!-- Tiêu đề kết quả -->
+    <div class="w-full text-center pt-2">
+      <div id="resultRarityBadge" class="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-1">
+        KẾT QUẢ CẦU NGUYỆN
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold font-cinzel text-amber-200">
+        VẬN MỆNH ĐÃ ĐƯỢC ĐỊNH ĐOẠT
+      </h2>
+    </div>
+
+    <!-- Khu vực danh sách thẻ quay được -->
+    <div id="cardsGridContainer" class="w-full max-w-6xl mx-auto my-auto py-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4 overflow-y-auto max-h-[70vh]">
+      <!-- Thẻ bài sẽ được render động bằng JavaScript -->
+    </div>
+
+    <!-- Footer nút bấm xác nhận hoặc quay tiếp -->
+    <div class="w-full max-w-md mx-auto flex items-center justify-center gap-4 pb-2">
+      <button onclick="closeResultsModal()" class="w-full py-2.5 px-6 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-600 transition-all">
+        Đóng / Xác Nhận
+      </button>
+      <button id="pullAgainBtn" onclick="pullAgain()" class="wish-btn w-full py-2.5 px-6 rounded-full text-slate-950 font-bold text-sm transition-all">
+        Cầu Nguyện Lại
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL LỊCH SỬ QUAY ==================== -->
+  <div id="historyModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="max-w-lg w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[80vh]">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <h3 class="font-bold text-lg font-cinzel text-amber-300">Lịch Sử Cầu Nguyện</h3>
+        <button onclick="closeHistoryModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      </div>
+      <div class="text-xs text-slate-400 py-2">
+        Tổng số lần đã quay: <span id="totalPullsText" class="font-bold text-amber-300">0</span> | Bảo hiểm hiện tại: <span id="historyPityText" class="font-bold text-amber-300">0</span>/90
+      </div>
+      <div id="historyList" class="flex-1 overflow-y-auto space-y-2 py-2 pr-1 text-xs">
+        <div class="text-center text-slate-500 py-8">Chưa có lịch sử quay nào</div>
+      </div>
+      <button onclick="closeHistoryModal()" class="mt-3 w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+        Đóng
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL CHI TIẾT QUY TẮC ==================== -->
+  <div id="rulesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="max-w-md w-full bg-slate-900 border border-amber-400/40 rounded-3xl p-6 shadow-2xl text-left space-y-3.5 text-xs sm:text-sm text-slate-300">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <h3 class="font-bold text-base font-cinzel text-amber-300">Quy Tắc Banner Sinh Nhật</h3>
+        <button onclick="closeRulesModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">✕</button>
+      </div>
+      <ul class="space-y-2.5 list-disc pl-4 text-slate-300 text-xs leading-relaxed">
+        <li><strong class="text-amber-300">Thẻ Vàng 5★ (Phần Quà Đặc Biệt):</strong> Cơ hội quay ra món quà sinh nhật thực tế. Khi ấn vào thẻ này sẽ mở ra đường link quà tặng riêng biệt.</li>
+        <li><strong class="text-amber-300">Cơ chế Bảo Hiểm 90 Lần (Hard Pity):</strong> Nếu trong 89 lần chưa nhận được Thẻ 5★, lần thứ 90 chắc chắn 100% sẽ xuất hiện Thẻ Vàng!</li>
+        <li><strong class="text-purple-300">Thẻ Tím 4★ (Lời Chúc Ý Nghĩa):</strong> Gồm 14 lời chúc sinh nhật sâu sắc và ấm áp. Cứ mỗi 10 lần quay chắc chắn nhận ít nhất một thẻ 4★ trở lên.</li>
+        <li><strong class="text-blue-300">Thẻ Lam 3★ (Thẻ Vui Nhộn):</strong> Gồm 17 lời chúc hài hước, dí dỏm giúp ngày sinh nhật thêm vui tươi.</li>
+      </ul>
+      <button onclick="closeRulesModal()" class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs">
+        Đã Hiểu
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. CẤU HÌNH DỮ LIỆU TÙY BIẾN CHO NGƯỜI DÙNG (DỄ DÀNG THAY ĐỔI)
+       ========================================================================= */
+    const CONFIG = {
+      // Mật khẩu mở khóa Đoạn 1 (Mặc định: 03102010)
+      correctPasscode: "03102010",
+
+      // Thông tin Thẻ Vàng Đặc Biệt 5 Sao (Có thể thay hình ảnh và link nhận quà)
+      specialGift: {
+        id: "gift_5star",
+        name: "HỘP QUÀ SINH NHẬT HOÀNG KIM",
+        description: "Chúc mừng sinh nhật! Bạn đã quay trúng phần quà đặc biệt nhất! Chạm vào đây để mở hộp quà nhé!",
+        // Thay link ảnh quà tặng tại đây (hoặc link ảnh bất kỳ):
+        image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=600&auto=format&fit=crop",
+        // Thay đường link website nhận quà / mua sắm / thiệp online tại đây:
+        giftUrl: "https://gift.shopmygiftcards.com/giftcards/preview/v3/key_4130737f-7f0e-47f0-bd5e-2dc99c3f0488", 
+        rarity: 5,
+        tag: "ĐẶC BIỆT NHẤT"
+      },
+
+      // Danh sách 17 Thẻ 3 Sao (Thẻ Rỗng / Lời Chúc Vui Nhộn / Chúc May Mắn)
+      threeStarCards: [
+        { id: "3s_1", title: "Vé Cười Thả Ga", desc: "Hôm nay được miễn trừ mọi buồn phiền, cười tít mắt 24/24!" },
+        { id: "3s_2", title: "Hộp Không Khí Tinh Khiết", desc: "100% không khí nguyên chất thu hoạch từ đỉnh núi tuyết!" },
+        { id: "3s_3", title: "Bùa May Mắn Lần Sau", desc: "Vận may đang tích lũy, lần quay kế tiếp sẽ tỏa sáng hơn!" },
+        { id: "3s_4", title: "Vé Miễn Trừ Rửa Bát", desc: "Có hiệu lực ngay hôm nay... nếu bạn tự giác làm trước!" },
+        { id: "3s_5", title: "Lời Chúc Ăn Mãi Không Béo", desc: "Ăn cả thế giới trong ngày sinh nhật mà dáng vẫn chuẩn!" },
+        { id: "3s_6", title: "160 Nguyên Thạch Ảo", desc: "Cộng ngay 160 niềm vui và năng lượng tích cực vào tim!" },
+        { id: "3s_7", title: "Nụ Cười Rạng Rỡ", desc: "Tặng bạn một nụ cười ấm áp tiếp thêm động lực cả ngày!" },
+        { id: "3s_8", title: "Trà Sữa Full Topping", desc: "Ước nguyện một ly trà sữa ngọt ngào sẽ sớm thành hiện thực!" },
+        { id: "3s_9", title: "Vé Ngủ Nướng 15 Phút", desc: "Được phép lười thêm một chút vào mỗi buổi sáng lạnh!" },
+        { id: "3s_10", title: "Buff Tươi Tắn +50%", desc: "Hôm nay bạn là người tỏa sáng và đáng yêu nhất trần đời!" },
+        { id: "3s_11", title: "Chiếc Ô Che Mưa", desc: "Chúc bạn ngày nắng có gió mát, ngày mưa có người chờ đợi!" },
+        { id: "3s_12", title: "Tấm Vé Vô Tư", desc: "Quẳng gánh lo đi và tận hưởng trọn vẹn từng khoảnh khắc tuổi mới!" },
+        { id: "3s_13", title: "Bánh Kem Vô Hình", desc: "Calo bằng 0 nhưng độ ngọt ngào thì chạm nóc 100%!" },
+        { id: "3s_14", title: "Cuộn Giấy Thời Gian", desc: "Đọc xong dòng này bạn đã vừa mỉm cười thêm 3 giây xinh đẹp!" },
+        { id: "3s_15", title: "Làn Gió Mát Lành", desc: "Mọi áp lực, muộn phiền xin hãy theo gió bay đi thật xa!" },
+        { id: "3s_16", title: "Huy Hiệu Dễ Thương", desc: "Trao tặng danh hiệu Người Đáng Yêu Nhất Ngày Hôm Nay!" },
+        { id: "3s_17", title: "Hạt Giống Hạnh Phúc", desc: "Gieo mầm hôm nay, đơm hoa kết trái niềm vui suốt cả năm!" }
+      ],
+
+      // Danh sách 14 Thẻ 4 Sao (Lời Chúc Sinh Nhật Ý Nghĩa & Sâu Sắc)
+      fourStarCards: [
+        { id: "4s_1", title: "Tuổi Mới Rực Rỡ", desc: "Chúc bạn bước sang tuổi mới với nhiều thành công rực rỡ và tự hào!" },
+        { id: "4s_2", title: "Bình An Như Ý", desc: "Mong tâm hồn bạn luôn an yên, vạn sự hanh thông, vạn điều như ý!" },
+        { id: "4s_3", title: "Tỏa Sáng Tinh Tú", desc: "Hãy luôn tự tin, kiêu hãnh và tỏa sáng theo cách đặc biệt của riêng bạn!" },
+        { id: "4s_4", title: "Hạnh Phúc Bất Tận", desc: "Chúc bạn mỗi sáng thức dậy đều đón nhận niềm vui và nụ cười rạng ngời!" },
+        { id: "4s_5", title: "Sức Khỏe Vô Biên", desc: "Chúc bạn sức khỏe dồi dào, luôn tràn trề năng lượng nhiệt huyết!" },
+        { id: "4s_6", title: "Tình Bạn Vĩnh Cửu", desc: "Dù thời gian có trôi đi, chúng ta vẫn mãi là những người bạn tốt nhất!" },
+        { id: "4s_7", title: "Bản Lĩnh Vững Vàng", desc: "Thêm một tuổi mới thông minh hơn, kiên cường vượt qua mọi thử thách!" },
+        { id: "4s_8", title: "Gặp Nhiều Quý Nhân", desc: "Mong trên mọi nẻo đường tương lai bạn luôn có người trợ lực giúp đỡ!" },
+        { id: "4s_9", title: "Kỳ Tích Nở Hoa", desc: "Chúc mọi dự định học tập và công việc của bạn đều đạt kết quả xuất sắc!" },
+        { id: "4s_10", title: "Nụ Cười Tỏa Nắng", desc: "Đừng bao giờ đánh mất nụ cười này nhé, bạn mang đến sự ấm áp cho mọi người!" },
+        { id: "4s_11", title: "Yêu Thương Đong Đầy", desc: "Chúc bạn luôn sống trong vòng tay yêu thương của gia đình và người thân!" },
+        { id: "4s_12", title: "Hành Trình Kỳ Diệu", desc: "Mở ra một chương mới của tuổi trẻ với thật nhiều kỷ niệm tuyệt đẹp!" },
+        { id: "4s_13", title: "Tài Lộc Dồi Dào", desc: "Tuổi mới ví tiền luôn rủng rỉnh, mua sắm thả ga không cần nhìn giá!" },
+        { id: "4s_14", title: "Điều Ước Thành Sự Thật", desc: "Tất cả những điều bạn thầm ước khi thổi nến đều sẽ trở thành hiện thực!" }
+      ]
+    };
+
+    /* =========================================================================
+       2. HỆ THỐNG ÂM THANH BẰNG WEB AUDIO API (KHÔNG CẦN FILE NGOÀI)
+       ========================================================================= */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      // Tiếng gõ phím nhẹ nhàng
+      playKeyClick() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(650, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      }
+      // Tiếng gõ sai (buzzer)
+      playErrorBuzz() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(110, this.ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+      // Tiếng ting chuông thông báo (Zalo/iOS)
+      playDing() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const playTone = (freq, time, dur) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, time);
+          gain.gain.setValueAtTime(0.2, time);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(time);
+          osc.stop(time + dur);
+        };
+        playTone(587.33, now, 0.4); // D5
+        playTone(880, now + 0.12, 0.6); // A5
+      }
+      // Tiếng chúc mừng khi mở khóa thành công
+      playUnlockSuccess() {
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.1);
+          osc.stop(this.ctx.currentTime + idx * 0.1 + 0.4);
+        });
+      }
+      // Tiếng sao băng bay rạch trời (Gacha meteor whoosh)
+      playMeteorSound(rarity) {
+        this.init();
+        const now = this.ctx.currentTime;
+        // White noise whoosh
+        const bufferSize = this.ctx.sampleRate * 1.5;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(300, now);
+        filter.frequency.exponentialRampToValueAtTime(1500, now + 1.2);
+        filter.Q.value = 3;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + 0.8);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+        noise.stop(now + 1.5);
+
+        // Nốt nhạc vang vọng kết thúc sao băng
+        setTimeout(() => {
+          if (rarity === 5) {
+            // Nốt thánh thót vàng 5 sao
+            [523.25, 659.25, 783.99, 1046.5, 1318.51].forEach((f, i) => {
+              const osc = this.ctx.createOscillator();
+              const g = this.ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.08);
+              g.gain.setValueAtTime(0.3, this.ctx.currentTime + i * 0.08);
+              g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.08 + 1.2);
+              osc.connect(g);
+              g.connect(this.ctx.destination);
+              osc.start(this.ctx.currentTime + i * 0.08);
+              osc.stop(this.ctx.currentTime + i * 0.08 + 1.2);
+            });
+          } else if (rarity === 4) {
+            // Nốt huyền bí tím 4 sao
+            [440, 554.37, 659.25, 880].forEach((f, i) => {
+              const osc = this.ctx.createOscillator();
+              const g = this.ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.08);
+              g.gain.setValueAtTime(0.2, this.ctx.currentTime + i * 0.08);
+              g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.08 + 0.8);
+              osc.connect(g);
+              g.connect(this.ctx.destination);
+              osc.start(this.ctx.currentTime + i * 0.08);
+              osc.stop(this.ctx.currentTime + i * 0.08 + 0.8);
+            });
+          }
+        }, 1200);
+      }
+      // Tiếng lật bài
+      playCardFlip() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(900, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+    }
+    const sounds = new SoundEngine();
+
+    /* =========================================================================
+       3. HIỆU ỨNG CANVAS: BÓNG BAY ĐOẠN 1 & BẦU TRỜI SAO
+       ========================================================================= */
+    const bgCanvas = document.getElementById('bgCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let balloons = [];
+    let bgStars = [];
+    let isBalloonPhase = true;
+
+    function resizeCanvas() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Khởi tạo các quả bóng bay sắc màu
+    const balloonColors = ['#f43f5e', '#ec4899', '#a855f7', '#3b82f6', '#06b6d4', '#eab308', '#f97316'];
+    function initBalloons() {
+      balloons = [];
+      const count = Math.min(35, Math.floor(window.innerWidth / 35));
+      for (let i = 0; i < count; i++) {
+        balloons.push({
+          x: Math.random() * bgCanvas.width,
+          y: bgCanvas.height + Math.random() * bgCanvas.height * 1.5,
+          radius: 18 + Math.random() * 22,
+          speed: 1.2 + Math.random() * 2.2,
+          color: balloonColors[Math.floor(Math.random() * balloonColors.length)],
+          swingSpeed: 0.02 + Math.random() * 0.03,
+          swingAngle: Math.random() * Math.PI * 2,
+          stringLength: 35 + Math.random() * 20
+        });
+      }
+    }
+
+    // Khởi tạo các vì sao lấp lánh nền vũ trụ
+    function initBgStars() {
+      bgStars = [];
+      for (let i = 0; i < 150; i++) {
+        bgStars.push({
+          x: Math.random() * bgCanvas.width,
+          y: Math.random() * bgCanvas.height,
+          radius: Math.random() * 1.5,
+          alpha: Math.random(),
+          speed: 0.01 + Math.random() * 0.03
+        });
+      }
+    }
+    initBalloons();
+    initBgStars();
+
+    // Vòng lặp vẽ nền Canvas
+    function animateBackground() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+      // Vẽ các ngôi sao lấp lánh
+      bgCtx.fillStyle = '#ffffff';
+      bgStars.forEach(s => {
+        s.alpha += s.speed;
+        const currentAlpha = (Math.sin(s.alpha) + 1) / 2;
+        bgCtx.globalAlpha = currentAlpha * 0.7;
+        bgCtx.beginPath();
+        bgCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        bgCtx.fill();
+      });
+      bgCtx.globalAlpha = 1;
+
+      // Nếu đang trong giai đoạn Đoạn 1: Vẽ bóng bay bay lên
+      if (isBalloonPhase) {
+        balloons.forEach(b => {
+          b.y -= b.speed;
+          b.swingAngle += b.swingSpeed;
+          const swayX = b.x + Math.sin(b.swingAngle) * 15;
+
+          // Vẽ dây bóng
+          bgCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+          bgCtx.lineWidth = 1;
+          bgCtx.beginPath();
+          bgCtx.moveTo(swayX, b.y + b.radius);
+          bgCtx.quadraticCurveTo(swayX - 5, b.y + b.radius + b.stringLength / 2, swayX + 2, b.y + b.radius + b.stringLength);
+          bgCtx.stroke();
+
+          // Vẽ thân quả bóng
+          bgCtx.save();
+          bgCtx.translate(swayX, b.y);
+          bgCtx.scale(1, 1.25);
+          bgCtx.beginPath();
+          bgCtx.arc(0, 0, b.radius, 0, Math.PI * 2);
+          bgCtx.fillStyle = b.color;
+          bgCtx.fill();
+
+          // Đốm sáng trên bóng
+          bgCtx.beginPath();
+          bgCtx.arc(-b.radius * 0.35, -b.radius * 0.35, b.radius * 0.25, 0, Math.PI * 2);
+          bgCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+          bgCtx.fill();
+          bgCtx.restore();
+
+          // Tái sinh bóng khi bay qua đỉnh màn hình
+          if (b.y < -b.radius * 2) {
+            b.y = bgCanvas.height + 50;
+            b.x = Math.random() * bgCanvas.width;
+          }
+        });
+      }
+      requestAnimationFrame(animateBackground);
+    }
+    requestAnimationFrame(animateBackground);
+
+    /* =========================================================================
+       4. LOGIC ĐOẠN 1: BẢN BẢO MẬT & BÀN PHÍM SỐ
+       ========================================================================= */
+    let currentPin = "";
+    const pinDots = document.querySelectorAll('.pin-dot');
+    const pinContainer = document.getElementById('pinContainer');
+    const pinMessage = document.getElementById('pinMessage');
+
+    function updatePinDisplay() {
+      pinDots.forEach((dot, index) => {
+        if (index < currentPin.length) {
+          dot.classList.add('bg-amber-400', 'border-amber-300', 'shadow-[0_0_10px_#facc15]');
+          dot.classList.remove('border-slate-500');
+        } else {
+          dot.classList.remove('bg-amber-400', 'border-amber-300', 'shadow-[0_0_10px_#facc15]');
+          dot.classList.add('border-slate-500');
+        }
+      });
+    }
+
+    function handleKeypad(key) {
+      sounds.playKeyClick();
+      if (key === 'CLEAR') {
+        currentPin = "";
+        pinMessage.textContent = "Đã xóa mã nhập";
+        pinMessage.className = "h-6 text-xs text-slate-400 mb-4 transition-all";
+        updatePinDisplay();
+        return;
+      }
+      if (key === 'ENTER') {
+        verifyPasscode();
+        return;
+      }
+      if (currentPin.length < 8) {
+        currentPin += key;
+        updatePinDisplay();
+        // Tự động kiểm tra nếu đủ 8 ký tự
+        if (currentPin.length === 8) {
+          setTimeout(verifyPasscode, 150);
+        }
+      }
+    }
+
+    function verifyPasscode() {
+      if (currentPin === CONFIG.correctPasscode) {
+        // MẬT KHẨU ĐÚNG!
+        sounds.playUnlockSuccess();
+        pinMessage.textContent = "Mật mã chính xác! Đang giải mã phong ấn...";
+        pinMessage.className = "h-6 text-xs text-emerald-400 font-bold mb-4 transition-all";
+        
+        // Bắn pháo hoa ăn mừng
+        if (window.confetti) {
+          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        }
+
+        // Chuyển mượt sang Đoạn 2 sau 0.8 giây
+        setTimeout(() => {
+          transitionToStage2();
+        }, 800);
+      } else {
+        // MẬT KHẨU SAI
+        sounds.playErrorBuzz();
+        pinContainer.classList.add('shake-animation', 'border-rose-500');
+        pinMessage.textContent = "Mật khẩu chưa đúng, vui lòng thử lại nhé!";
+        pinMessage.className = "h-6 text-xs text-rose-400 font-semibold mb-4 transition-all";
+
+        setTimeout(() => {
+          pinContainer.classList.remove('shake-animation', 'border-rose-500');
+          currentPin = "";
+          updatePinDisplay();
+        }, 600);
+      }
+    }
+
+    /* =========================================================================
+       5. LOGIC ĐOẠN 2 & 3: THÔNG BÁO VÀ BỨC THƯ SINH NHẬT
+       ========================================================================= */
+    const stage1 = document.getElementById('stage1');
+    const stage2_3 = document.getElementById('stage2_3');
+    const pushNotification = document.getElementById('pushNotification');
+
+    function transitionToStage2() {
+      // Ẩn Đoạn 1
+      stage1.style.opacity = '0';
+      stage1.style.pointerEvents = 'none';
+
+      setTimeout(() => {
+        stage1.style.display = 'none';
+        isBalloonPhase = false; // Tắt bớt bóng bay để tập trung bức thư
+
+        // Hiển thị Đoạn 2 & 3
+        stage2_3.style.opacity = '1';
+        stage2_3.style.pointerEvents = 'auto';
+
+        // Đẩy thông báo từ đỉnh xuống sau 300ms
+        setTimeout(() => {
+          pushNotification.style.transform = 'translate(-50%, 0)';
+          sounds.playDing();
+
+          // Pháo hoa nhẹ
+          if (window.confetti) {
+            confetti({ particleCount: 40, spread: 60, origin: { y: 0.2 } });
+          }
+        }, 400);
+      }, 700);
+    }
+
+    function transitionToGacha() {
+      sounds.playUnlockSuccess();
+      // Hiệu ứng pháo hoa bùng nổ
+      if (window.confetti) {
+        confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 } });
+      }
+
+      // Ẩn Đoạn 2 & 3
+      stage2_3.style.opacity = '0';
+      stage2_3.style.pointerEvents = 'none';
+
+      // Chuyển sang không gian Gacha Đoạn 4
+      setTimeout(() => {
+        stage2_3.style.display = 'none';
+        const stage4 = document.getElementById('stage4');
+        stage4.style.opacity = '1';
+        stage4.style.pointerEvents = 'auto';
+        updatePityUI();
+      }, 800);
+    }
+
+    /* =========================================================================
+       6. LOGIC ĐOẠN 4: HỆ THỐNG GACHA BANNER VÀ BẢO HIỂM 90 LẦN
+       ========================================================================= */
+    let pityCounter = 0;       // Đếm số lần quay để kích hoạt bảo hiểm 90 lần
+    let fourStarPity = 0;      // Bảo hiểm 10 lần chắc chắn có ít nhất 1 thẻ 4★
+    let totalPulls = 0;        // Tổng số lần đã quay
+    let pullHistory = [];      // Danh sách lịch sử
+    let lastPullCount = 1;     // Lưu trạng thái quay lại x1 hoặc x10
+    let currentResults = [];   // Lưu kết quả đợt quay gần nhất
+
+    function updatePityUI() {
+      document.getElementById('pityCountText').textContent = pityCounter;
+      document.getElementById('pityRemainText').textContent = 90 - pityCounter;
+      document.getElementById('totalPullsText').textContent = totalPulls;
+      document.getElementById('historyPityText').textContent = pityCounter;
+    }
+
+    // Thuật toán quay gacha đơn lẻ
+    function rollSingleCard() {
+      pityCounter++;
+      fourStarPity++;
+      totalPulls++;
+
+      let rarity = 3;
+
+      // 1. Kiểm tra mốc BẢO HIỂM 90 LẦN (Chắc chắn nhận Thẻ Vàng 5 Sao)
+      if (pityCounter >= 90) {
+        rarity = 5;
+      } else {
+        // Tỷ lệ may mắn cơ bản: 5★ là 1.5% (Tăng tốc mạnh từ lần 74 trở đi giống soft-pity)
+        let fiveStarRate = 0.015;
+        if (pityCounter > 73) {
+          fiveStarRate += (pityCounter - 73) * 0.06;
+        }
+
+        const rand = Math.random();
+        if (rand < fiveStarRate) {
+          rarity = 5;
+        } else if (fourStarPity >= 10 || rand < (fiveStarRate + 0.15)) {
+          // Bảo hiểm 10 lần hoặc tỷ lệ 15% trúng thẻ 4 sao
+          rarity = 4;
+        } else {
+          rarity = 3;
+        }
+      }
+
+      // Xử lý dữ liệu trả về theo phẩm cấp
+      let cardData = null;
+      if (rarity === 5) {
+        pityCounter = 0; // Reset bảo hiểm 5★
+        cardData = { ...CONFIG.specialGift };
+      } else if (rarity === 4) {
+        fourStarPity = 0; // Reset bảo hiểm 4★
+        const item = CONFIG.fourStarCards[Math.floor(Math.random() * CONFIG.fourStarCards.length)];
+        cardData = { ...item, rarity: 4 };
+      } else {
+        const item = CONFIG.threeStarCards[Math.floor(Math.random() * CONFIG.threeStarCards.length)];
+        cardData = { ...item, rarity: 3 };
+      }
+
+      // Ghi nhận vào lịch sử
+      pullHistory.unshift({
+        pullNumber: totalPulls,
+        name: cardData.title || cardData.name,
+        rarity: rarity,
+        time: new Date().toLocaleTimeString('vi-VN')
+      });
+
+      return cardData;
+    }
+
+    // Kích hoạt Cầu Nguyện x1 hoặc x10
+    function pullGacha(count) {
+      lastPullCount = count;
+      currentResults = [];
+
+      for (let i = 0; i < count; i++) {
+        currentResults.push(rollSingleCard());
+      }
+      updatePityUI();
+
+      // Xác định phẩm cấp cao nhất để phát hiệu ứng sao băng tương ứng
+      const highestRarity = Math.max(...currentResults.map(c => c.rarity));
+
+      // Bắt đầu chuỗi hoạt ảnh sao băng
+      startWishAnimation(highestRarity, currentResults);
+    }
+
+    function pullAgain() {
+      closeResultsModal();
+      setTimeout(() => {
+        pullGacha(lastPullCount);
+      }, 300);
+    }
+
+    /* =========================================================================
+       7. HOẠT ẢNH SAO BĂNG RẠCH TRỜI (WISHING ANIMATION)
+       ========================================================================= */
+    const wishingOverlay = document.getElementById('wishingOverlay');
+    const meteorCanvas = document.getElementById('meteorCanvas');
+    const meteorCtx = meteorCanvas.getContext('2d');
+    let meteorAnimId = null;
+    let pendingResults = [];
+
+    function startWishAnimation(highestRarity, results) {
+      pendingResults = results;
+      meteorCanvas.width = window.innerWidth;
+      meteorCanvas.height = window.innerHeight;
+
+      wishingOverlay.style.opacity = '1';
+      wishingOverlay.style.pointerEvents = 'auto';
+
+      sounds.playMeteorSound(highestRarity);
+
+      // Màu sắc theo phẩm cấp cao nhất
+      let trailColor = '#60a5fa'; // 3 Sao - Xanh Lam
+      if (highestRarity === 5) {
+        trailColor = '#facc15'; // 5 Sao - Vàng Hoàng Kim
+      } else if (highestRarity === 4) {
+        trailColor = '#c084fc'; // 4 Sao - Tím Huyền Bí
+      }
+
+      // Tạo chùm sao băng bay chéo từ góc phải trên xuống góc trái dưới
+      let progress = 0;
+      const startX = meteorCanvas.width * 0.9;
+      const startY = meteorCanvas.height * 0.1;
+      const targetX = meteorCanvas.width * 0.15;
+      const targetY = meteorCanvas.height * 0.85;
+
+      const particles = [];
+
+      function renderMeteor() {
+        meteorCtx.fillStyle = 'rgba(11, 14, 27, 0.25)';
+        meteorCtx.fillRect(0, 0, meteorCanvas.width, meteorCanvas.height);
+
+        progress += 0.022;
+
+        const currentX = startX + (targetX - startX) * progress;
+        const currentY = startY + (targetY - startY) * progress;
+
+        // Thêm hạt bụi lấp lánh sau đuôi sao băng
+        for (let i = 0; i < 4; i++) {
+          particles.push({
+            x: currentX + (Math.random() - 0.5) * 20,
+            y: currentY + (Math.random() - 0.5) * 20,
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3,
+            radius: 2 + Math.random() * 3,
+            alpha: 1,
+            color: trailColor
+          });
+        }
+
+        // Vẽ và cập nhật các hạt bụi
+        particles.forEach((p, idx) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.03;
+          if (p.alpha <= 0) {
+            particles.splice(idx, 1);
+            return;
+          }
+          meteorCtx.save();
+          meteorCtx.globalAlpha = p.alpha;
+          meteorCtx.fillStyle = p.color;
+          meteorCtx.beginPath();
+          meteorCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          meteorCtx.fill();
+          meteorCtx.restore();
+        });
+
+        // Vẽ lõi đầu sao băng
+        if (progress <= 1.05) {
+          meteorCtx.save();
+          meteorCtx.shadowColor = trailColor;
+          meteorCtx.shadowBlur = 35;
+          meteorCtx.fillStyle = '#ffffff';
+          meteorCtx.beginPath();
+          meteorCtx.arc(currentX, currentY, 9, 0, Math.PI * 2);
+          meteorCtx.fill();
+          meteorCtx.restore();
+        }
+
+        if (progress < 1.25) {
+          meteorAnimId = requestAnimationFrame(renderMeteor);
+        } else {
+          // Hoàn thành hoạt ảnh -> Hiển thị kết quả
+          finishWishAnimation();
+        }
+      }
+      renderMeteor();
+    }
+
+    function skipWishAnimation() {
+      if (meteorAnimId) {
+        cancelAnimationFrame(meteorAnimId);
+        meteorAnimId = null;
+      }
+      finishWishAnimation();
+    }
+
+    function finishWishAnimation() {
+      wishingOverlay.style.opacity = '0';
+      wishingOverlay.style.pointerEvents = 'none';
+      renderResultsModal(pendingResults);
+    }
+
+    /* =========================================================================
+       8. KẾT QUẢ GACHA & HIỆU ỨNG THẺ BÀI 3D / THẺ VÀNG QUÀ TẶNG
+       ========================================================================= */
+    const resultsModal = document.getElementById('resultsModal');
+    const cardsGridContainer = document.getElementById('cardsGridContainer');
+    const resultRarityBadge = document.getElementById('resultRarityBadge');
+
+    function renderResultsModal(cards) {
+      cardsGridContainer.innerHTML = '';
+      const highestRarity = Math.max(...cards.map(c => c.rarity));
+
+      // Đặt màu sắc badge kết quả
+      if (highestRarity === 5) {
+        resultRarityBadge.className = 'inline-block px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase mb-1 bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/40';
+        resultRarityBadge.textContent = '★ XUẤT HIỆN THẺ HOÀNG KIM 5 SAO ★';
+        if (window.confetti) {
+          confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
+        }
+      } else if (highestRarity === 4) {
+        resultRarityBadge.className = 'inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-1 bg-purple-500 text-white shadow-lg shadow-purple-500/40';
+        resultRarityBadge.textContent = '★ NHẬN ĐƯỢC LỜI CHÚC Ý NGHĨA 4 SAO ★';
+      } else {
+        resultRarityBadge.className = 'inline-block px-4 py-1 rounded-full text-xs font-medium tracking-widest uppercase mb-1 bg-blue-500/20 text-blue-300 border border-blue-400/30';
+        resultRarityBadge.textContent = 'KẾT QUẢ CẦU NGUYỆN 3 SAO';
+      }
+
+      // Render từng thẻ bài
+      cards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        const isFiveStar = card.rarity === 5;
+        const isFourStar = card.rarity === 4;
+
+        // Kích thước linh hoạt theo số lượng thẻ
+        const sizeClasses = cards.length === 1 
+          ? 'w-72 sm:w-80 min-h-[380px]' 
+          : 'w-36 sm:w-48 min-h-[220px] sm:min-h-[280px]';
+
+        // Viền và hiệu ứng màu
+        let borderGlow = 'border border-blue-400/40 bg-gradient-to-b from-slate-900 to-blue-950/60 shadow-blue-500/10';
+        let starStr = '★★★';
+        let starColor = 'text-blue-400';
+
+        if (isFourStar) {
+          borderGlow = 'border-2 border-purple-400/70 bg-gradient-to-b from-[#241338] to-[#120a1f] shadow-purple-500/20 shadow-lg';
+          starStr = '★★★★';
+          starColor = 'text-purple-400';
+        } else if (isFiveStar) {
+          borderGlow = 'genshin-gold-border bg-gradient-to-b from-[#3a290c] via-[#211604] to-[#140e02] pulse-glow shadow-2xl';
+          starStr = '★★★★★';
+          starColor = 'text-amber-300';
+        }
+
+        cardEl.className = `${sizeClasses} ${borderGlow} rounded-2xl p-3 sm:p-4 flex flex-col justify-between items-center text-center relative overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer group`;
+        cardEl.style.animationDelay = `${index * 80}ms`;
+
+        // Nội dung bên trong thẻ
+        if (isFiveStar) {
+          // THẺ VÀNG ĐẶC BIỆT 5 SAO (CÓ ẢNH VÀ LINK MỞ QUÀ)
+          cardEl.innerHTML = `
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-amber-400/30 rounded-full blur-xl pointer-events-none"></div>
+            <div class="w-full flex justify-between items-center text-[10px] font-bold text-amber-300">
+              <span class="bg-amber-400/20 px-2 py-0.5 rounded-full border border-amber-300/40">5★ ĐẶC BIỆT</span>
+              <span>${starStr}</span>
+            </div>
+            
+            <!-- Ảnh minh họa quà tặng -->
+            <div class="w-24 h-24 sm:w-32 sm:h-32 my-2 rounded-xl overflow-hidden border border-amber-300/50 shadow-inner group-hover:scale-110 transition-transform">
+              <img src="${card.image}" alt="Quà tặng" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x400/251705/facc15?text=SPECIAL+GIFT'">
+            </div>
+
+            <div class="w-full">
+              <h4 class="font-bold text-xs sm:text-sm font-cinzel text-amber-200 line-clamp-1">${card.name}</h4>
+              <p class="text-[10px] sm:text-xs text-amber-100/80 my-1 line-clamp-2">${card.description}</p>
+            </div>
+
+            <!-- Nút bấm nhận quà chuyển link -->
+            <a href="${card.giftUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="w-full py-2 px-3 mt-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 font-black text-[11px] sm:text-xs shadow-lg hover:brightness-110 flex items-center justify-center gap-1.5 transition-all">
+              <span>Mở Quà Ngay</span>
+              <span>🎁</span>
+            </a>
+          `;
+
+          // Bấm trực tiếp vào cả thẻ cũng mở link quà
+          cardEl.addEventListener('click', () => {
+            window.open(card.giftUrl, '_blank');
+          });
+
+        } else {
+          // THẺ 3 SAO HOẶC 4 SAO
+          cardEl.innerHTML = `
+            <div class="w-full flex justify-between items-center text-[9px] sm:text-[10px] font-semibold ${starColor}">
+              <span>${isFourStar ? '4★ LỜI CHÚC' : '3★ MAY MẮN'}</span>
+              <span>${starStr}</span>
+            </div>
+
+            <!-- Biểu tượng đại diện -->
+            <div class="w-14 h-14 sm:w-16 sm:h-16 my-auto rounded-2xl ${isFourStar ? 'bg-purple-500/20 border-purple-400/40 text-2xl sm:text-3xl' : 'bg-blue-500/10 border-blue-400/20 text-xl sm:text-2xl'} border flex items-center justify-center shadow-md">
+              ${isFourStar ? '💖' : '🎈'}
+            </div>
+
+            <div class="w-full">
+              <h4 class="font-bold text-xs sm:text-sm text-slate-100 mb-1 line-clamp-1">${card.title}</h4>
+              <p class="text-[10px] sm:text-[11px] text-slate-300/80 leading-snug line-clamp-3">${card.desc}</p>
+            </div>
+
+            <div class="w-full pt-1.5 border-t border-white/5 text-[9px] text-slate-400 font-mono">
+              Sinh Nhật Vui Vẻ
+            </div>
+          `;
+        }
+
+        cardsGridContainer.appendChild(cardEl);
+      });
+
+      // Phát âm thanh lật bài
+      sounds.playCardFlip();
+
+      // Hiển thị modal kết quả
+      resultsModal.style.opacity = '1';
+      resultsModal.style.pointerEvents = 'auto';
+    }
+
+    function closeResultsModal() {
+      resultsModal.style.opacity = '0';
+      resultsModal.style.pointerEvents = 'none';
+    }
+
+    /* =========================================================================
+       9. XỬ LÝ MODAL LỊCH SỬ & QUY TẮC
+       ========================================================================= */
+    const historyModal = document.getElementById('historyModal');
+    const rulesModal = document.getElementById('rulesModal');
+    const historyList = document.getElementById('historyList');
+
+    function openHistoryModal() {
+      historyList.innerHTML = '';
+      if (pullHistory.length === 0) {
+        historyList.innerHTML = '<div class="text-center text-slate-500 py-8">Chưa có lịch sử cầu nguyện nào</div>';
+      } else {
+        pullHistory.forEach(item => {
+          const row = document.createElement('div');
+          const isGold = item.rarity === 5;
+          const isPurple = item.rarity === 4;
+
+          let badgeColor = 'bg-blue-900/40 text-blue-300 border-blue-700/50';
+          let textColor = 'text-slate-200';
+          if (isGold) {
+            badgeColor = 'bg-amber-400 text-slate-950 font-bold border-amber-300';
+            textColor = 'text-amber-300 font-bold';
+          } else if (isPurple) {
+            badgeColor = 'bg-purple-900/60 text-purple-300 font-semibold border-purple-700/50';
+            textColor = 'text-purple-200';
+          }
+
+          row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-950/40 border border-slate-800';
+          row.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] border ${badgeColor}">${item.rarity}★</span>
+              <span class="${textColor}">${item.name}</span>
+            </div>
+            <div class="text-[10px] text-slate-500">
+              #${item.pullNumber} • ${item.time}
+            </div>
+          `;
+          historyList.appendChild(row);
+        });
+      }
+      historyModal.style.opacity = '1';
+      historyModal.style.pointerEvents = 'auto';
+    }
+
+    function closeHistoryModal() {
+      historyModal.style.opacity = '0';
+      historyModal.style.pointerEvents = 'none';
+    }
+
+    function openRulesModal() {
+      rulesModal.style.opacity = '1';
+      rulesModal.style.pointerEvents = 'auto';
+    }
+
+    function closeRulesModal() {
+      rulesModal.style.opacity = '0';
+      rulesModal.style.pointerEvents = 'none';
+    }
+  </script>
+</body>
+</html>
+</html>
